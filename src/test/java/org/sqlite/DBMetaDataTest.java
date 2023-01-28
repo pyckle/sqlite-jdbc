@@ -138,8 +138,8 @@ public class DBMetaDataTest {
 
         testTypeInfo(
                 rs,
-                "BLOB",
-                Types.BLOB,
+                "NULL",
+                Types.NULL,
                 0,
                 null,
                 null,
@@ -172,23 +172,6 @@ public class DBMetaDataTest {
                 10);
         testTypeInfo(
                 rs,
-                "NULL",
-                Types.NULL,
-                0,
-                null,
-                null,
-                null,
-                DatabaseMetaData.typeNullable,
-                false,
-                DatabaseMetaData.typeSearchable,
-                true,
-                false,
-                false,
-                0,
-                0,
-                10);
-        testTypeInfo(
-                rs,
                 "REAL",
                 Types.REAL,
                 0,
@@ -214,6 +197,23 @@ public class DBMetaDataTest {
                 null,
                 DatabaseMetaData.typeNullable,
                 true,
+                DatabaseMetaData.typeSearchable,
+                true,
+                false,
+                false,
+                0,
+                0,
+                10);
+        testTypeInfo(
+                rs,
+                "BLOB",
+                Types.BLOB,
+                0,
+                null,
+                null,
+                null,
+                DatabaseMetaData.typeNullable,
+                false,
                 DatabaseMetaData.typeSearchable,
                 true,
                 false,
@@ -374,6 +374,18 @@ public class DBMetaDataTest {
         assertThat(rs.next()).isFalse();
 
         rs = meta.getColumns(null, null, "%", "%");
+        // SYSTEM TABLE "sqlite_schema"
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getString("TABLE_NAME")).isEqualTo("sqlite_schema");
+        assertThat(rs.getString("COLUMN_NAME")).isEqualTo("type");
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getString("COLUMN_NAME")).isEqualTo("name");
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getString("COLUMN_NAME")).isEqualTo("tbl_name");
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getString("COLUMN_NAME")).isEqualTo("rootpage");
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getString("COLUMN_NAME")).isEqualTo("sql");
         // TABLE "test"
         assertThat(rs.next()).isTrue();
         assertThat(rs.getString("TABLE_NAME")).isEqualTo("test");
@@ -403,6 +415,20 @@ public class DBMetaDataTest {
         rs = meta.getColumns(null, null, "doesnotexist", "%");
         assertThat(rs.next()).isFalse();
         assertThat(rs.getMetaData().getColumnCount()).isEqualTo(24);
+
+        rs = meta.getColumns(null, null, "sqlite_schema", "%");
+        // SYSTEM TABLE "sqlite_schema"
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getString("TABLE_NAME")).isEqualTo("sqlite_schema");
+        assertThat(rs.getString("COLUMN_NAME")).isEqualTo("type");
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getString("COLUMN_NAME")).isEqualTo("name");
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getString("COLUMN_NAME")).isEqualTo("tbl_name");
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getString("COLUMN_NAME")).isEqualTo("rootpage");
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getString("COLUMN_NAME")).isEqualTo("sql");
     }
 
     @Test
